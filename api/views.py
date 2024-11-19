@@ -5,21 +5,21 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
-from .models import Food
+from .models import Food, FoodType, Order
 from .permissions import IsAdminUser, IsAuthenticatedOrReadOnly
-from .serializers import FoodSerializer
+from .serializers import FoodSerializer, FoodTypeSerializer, OrderSerializer
 
 
-class FoodAPIView(APIView):
-    queryset = Food.objects.all()
+class ListCreateAPIView(APIView):
+    queryset = None
+    serializer_class = None
     permission_classes = [IsAuthenticatedOrReadOnly]
-    serializer_class = FoodSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer: FoodSerializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
@@ -27,16 +27,15 @@ class FoodAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class FoodDetailAPIView(APIView):
-    queryset = Food.objects.all()
-    serializer_class = FoodSerializer
-
+class DetailAPIView(APIView):
+    queryset = None
+    serializer_class = None
     permission_classes = [IsAdminUser]
 
     def get(self, request, pk: int):
         obj = self.get_object()
         serializer = self.serializer_class(instance=obj)
-        
+
         return Response(serializer.data)
 
     def put(self, request, pk: int):
@@ -44,7 +43,7 @@ class FoodDetailAPIView(APIView):
         serializer = self.serializer_class(instance=obj, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        
+
         return Response(serializer.data)
 
     def delete(self, request, pk: int):
@@ -55,6 +54,36 @@ class FoodDetailAPIView(APIView):
 
     def get_object(self):
         return get_object_or_404(self.queryset.all(), **self.kwargs)
+
+
+class FoodTypeAPIView(ListCreateAPIView):
+    queryset = FoodType.objects.all()
+    serializer_class = FoodTypeSerializer
+
+
+class FoodTypeDetailAPIView(DetailAPIView):
+    queryset = Food.objects.all()
+    serializer_class = FoodSerializer
+
+
+class FoodAPIView(ListCreateAPIView):
+    queryset = Food.objects.all()
+    serializer_class = FoodSerializer
+
+
+class FoodDetailAPIView(DetailAPIView):
+    queryset = Food.objects.all()
+    serializer_class = FoodSerializer
+
+
+class OrderAPIView(ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+
+class OrderDetailAPIView(DetailAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
 
 @api_view(["GET"])
