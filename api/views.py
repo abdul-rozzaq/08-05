@@ -90,6 +90,8 @@ class OrderDetailAPIView(DetailAPIView):
 def home_page(request, format=None):
     return Response(
         {
-            "food": reverse("food", request=request, format=format),
+            "Food type": reverse("food-type-list", request=request, format=format),
+            "Food": reverse("food-list", request=request, format=format),
+            "Order": reverse("order-list", request=request, format=format),
         }
     )

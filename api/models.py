@@ -12,6 +12,7 @@ class FoodType(models.Model):
 class Food(models.Model):
     name = models.CharField(max_length=128)
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    category = models.ForeignKey(FoodType, on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
         return self.name

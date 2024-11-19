@@ -16,6 +16,15 @@ class FoodTypeSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    total_price = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
         fields = "__all__"
+
+    def get_total_price(self, obj):
+        return obj.food.price * obj.count
+
+    def get_price(self, obj):
+        return obj.food.price
