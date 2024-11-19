@@ -6,12 +6,13 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
 from .models import Food
+from .permissions import IsAdminUser, IsAuthenticatedOrReadOnly
 from .serializers import FoodSerializer
 
 
 class FoodAPIView(APIView):
     queryset = Food.objects.all()
-    permission_classes = []
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     serializer_class = FoodSerializer
 
@@ -33,6 +34,8 @@ class FoodAPIView(APIView):
 class FoodDetailAPIView(APIView):
     queryset = Food.objects.all()
     serializer_class = FoodSerializer
+
+    permission_classes = [IsAdminUser]
 
     def get(self, request, pk: int):
 
